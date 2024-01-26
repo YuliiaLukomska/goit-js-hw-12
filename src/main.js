@@ -20,36 +20,33 @@ const BASE_URL = 'https://pixabay.com/api/';
 
 refs.form.addEventListener('submit', onSearchImage);
 
-function onSearchImage(event) {
+async function onSearchImage(event) {
   event.preventDefault();
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
   const form = event.currentTarget;
   const inputValue = form.elements.image.value;
-
-  fetchOnImage(inputValue)
-    .then(data => {
-      refs.loader.classList.remove('loader');
-      refs.list.innerHTML = createGaleryMarkup(data);
-
-      lightbox.refresh();
-
-      if (data.hits.length === 0) {
-        iziToast.error({
-          message:
-            'Sorry, there are no images matching your search query. Please try again!',
-          messageColor: '#FAFAFB',
-          messageLineHeight: '24px',
-          messageSize: '16px',
-          position: 'topRight',
-          iconUrl: icon,
-          backgroundColor: '#EF4040',
-          maxWidth: '350px',
-          timeout: false,
-        });
-      }
-    })
-    .catch(error =>
+  try {
+    const data = await fetchOnImage(inputValue);
+    refs.loader.classList.remove('loader');
+    refs.list.innerHTML = createGaleryMarkup(data);
+    lightbox.refresh();
+    if (data.hits.length === 0) {
+      iziToast.error({
+        message:
+          'Sorry, there are no images matching your search query. Please try again!',
+        messageColor: '#FAFAFB',
+        messageLineHeight: '24px',
+        messageSize: '16px',
+        position: 'topRight',
+        iconUrl: icon,
+        backgroundColor: '#EF4040',
+        maxWidth: '350px',
+        timeout: false,
+      });
+    }
+  } catch (error) {
+    error =>
       iziToast.error({
         message: 'Error',
         messageColor: '#FAFAFB',
@@ -60,14 +57,15 @@ function onSearchImage(event) {
         backgroundColor: '#EF4040',
         maxWidth: '350px',
         timeout: false,
-      })
-    )
-    .finally(() => {
+      });
+  } finally {
+    () => {
       form.reset();
-    });
+    };
+  }
 }
 
-function fetchOnImage(inputValue) {
+async function fetchOnImage(inputValue) {
   const urlParam = new URLSearchParams({
     key: API_KEY,
     q: inputValue,
@@ -75,13 +73,9 @@ function fetchOnImage(inputValue) {
     orientation: 'horizontal',
     safesearch: 'true',
   });
-  return fetch(`${BASE_URL}?${urlParam}`).then(resp => {
-    if (!resp.ok) {
-      throw new Error(resp.statusText);
-    } else {
-      return resp.json();
-    }
-  });
+
+  const response = await fetch(`${BASE_URL}?${urlParam}`);
+  return response.json();
 }
 
 function createGaleryMarkup(data) {
