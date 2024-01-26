@@ -3,6 +3,7 @@ import 'izitoast/dist/css/iziToast.min.css';
 import icon from './img/left-close.svg';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import axios from 'axios';
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
