@@ -51,7 +51,7 @@ async function onSearchImage(event) {
     console.log(maxPage);
     createGaleryMarkup(data);
     refs.loader.classList.remove('loader');
-    if (data.hits.length > 0) {
+    if (data.hits.length > 0 && data.hits.length !== data.totalHits) {
       refs.loadbtn.classList.remove('is-hidden');
       refs.loadbtn.addEventListener('click', onLoadMoreImages);
     } else {
