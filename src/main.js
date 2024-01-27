@@ -26,6 +26,7 @@ const API_KEY = '41896397-c8b989416d0fb53fd1030eb96';
 const BASE_URL = 'https://pixabay.com/api/';
 let page = 1;
 let inputValue = '';
+let maxPage = 0;
 
 // вішаємо слухач на кнопку пошуку зображень
 refs.form.addEventListener('submit', onSearchImage);
@@ -34,6 +35,7 @@ refs.form.addEventListener('submit', onSearchImage);
 // додаємо кнопку Load More якщо на сторінці більше,ніж 1 картинка. На кнопку вішаємо слухач по кліку)
 async function onSearchImage(event) {
   event.preventDefault();
+  refs.loadbtn.classList.add('is-hidden');
   page = 1;
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
@@ -45,6 +47,8 @@ async function onSearchImage(event) {
   try {
     const data = await fetchOnImage(inputValue);
     console.log(data);
+    maxPage = Math.ceil(data.totalHits / 40);
+    console.log(maxPage);
     createGaleryMarkup(data);
     refs.loader.classList.remove('loader');
     if (data.hits.length > 0) {
@@ -106,9 +110,15 @@ async function onLoadMoreImages() {
   refs.loader.classList.add('loader');
   try {
     const data = await fetchOnImage(inputValue, page);
-    refs.loader.classList.remove('loader');
     createGaleryMarkup(data);
+    refs.loader.classList.remove('loader');
     lightbox.refresh();
+
+    // const amountOfResults = data.totalHits;
+    // const maxPage = Math.ceil(amountOfResults / 40);
+    // if (page > maxPage) {
+    //   refs.loadbtn.classList.add('is-hidden');
+    // }
   } catch (error) {
     console.log(error);
     iziToast.error({
@@ -122,6 +132,11 @@ async function onLoadMoreImages() {
       maxWidth: '350px',
       timeout: false,
     });
+  } finally {
+    if (page === maxPage) {
+      refs.loadbtn.classList.add('is-hidden');
+      refs.loadbtn.removeEventListener('click', onLoadMoreImages);
+    }
   }
 }
 
