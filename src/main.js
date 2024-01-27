@@ -1,3 +1,4 @@
+// Імпорти
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import icon from './img/left-close.svg';
@@ -5,11 +6,13 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import axios from 'axios';
 
+// Лайтбокс
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
 });
 
+// DOM-elements
 const refs = {
   form: document.querySelector('form'),
   button: document.querySelector('button'),
@@ -17,18 +20,24 @@ const refs = {
   loader: document.querySelector('span'),
   loadbtn: document.querySelector('.btn-load-more'),
 };
+
+// Константи та змінні
 const API_KEY = '41896397-c8b989416d0fb53fd1030eb96';
 const BASE_URL = 'https://pixabay.com/api/';
 let page = 1;
+let inputValue = '';
 
+// вішаємо слухач на кнопку пошуку зображень
 refs.form.addEventListener('submit', onSearchImage);
 
+// функція, яка виконується при submit (отримуємо дані з серверу в try catch і рендеримо розмітку з цими даними,
+// додаємо кнопку Load More якщо на сторінці більше,ніж 1 картинка. На кнопку вішаємо слухач по кліку)
 async function onSearchImage(event) {
   event.preventDefault();
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
   const form = event.currentTarget;
-  const inputValue = form.elements.image.value.trim();
+  inputValue = form.elements.image.value.trim();
   if (!inputValue) {
     return;
   }
@@ -38,7 +47,7 @@ async function onSearchImage(event) {
     refs.list.innerHTML = createGaleryMarkup(data);
     if (data.hits.length > 0) {
       refs.loadbtn.classList.remove('is-hidden');
-      refs.loadbtn.addEventListener('submit', onMoreImages);
+      refs.loadbtn.addEventListener('click', onLoadMoreImages);
     } else {
       refs.loadbtn.classList.add('is-hidden');
     }
@@ -58,6 +67,7 @@ async function onSearchImage(event) {
       });
     }
   } catch (error) {
+    console.log(error);
     iziToast.error({
       message: 'Error',
       messageColor: '#FAFAFB',
@@ -73,8 +83,8 @@ async function onSearchImage(event) {
     form.reset();
   }
 }
-
-async function fetchOnImage(inputValue) {
+// тут робимо get-запит на сервер
+async function fetchOnImage(inputValue, page = 1) {
   const response = await axios.get(`${BASE_URL}`, {
     params: {
       key: API_KEY,
@@ -87,6 +97,29 @@ async function fetchOnImage(inputValue) {
     },
   });
   return response.data;
+}
+// функція, яка викликається при кліку на кнопку Load More
+async function onLoadMoreImages() {
+  page += 1;
+  refs.loader.classList.add('loader');
+  try {
+    const data = await fetchOnImage(inputValue, page);
+    refs.loader.classList.remove('loader');
+    refs.list.innerHTML = createGaleryMarkup(data);
+  } catch (error) {
+    console.log(error);
+    iziToast.error({
+      message: 'Error',
+      messageColor: '#FAFAFB',
+      messageLineHeight: '24px',
+      messageSize: '16px',
+      position: 'topRight',
+      iconUrl: icon,
+      backgroundColor: '#EF4040',
+      maxWidth: '350px',
+      timeout: false,
+    });
+  }
 }
 
 function createGaleryMarkup(data) {
@@ -117,4 +150,5 @@ function createGaleryMarkup(data) {
         </li>`
     )
     .join('');
+  refs.list.insertAdjacentHTML();
 }
