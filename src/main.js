@@ -4,6 +4,7 @@ import icon from './img/left-close.svg';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import axios from 'axios';
+
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
@@ -14,9 +15,11 @@ const refs = {
   button: document.querySelector('button'),
   list: document.querySelector('ul'),
   loader: document.querySelector('span'),
+  loadbtn: document.querySelector('.btn-load-more'),
 };
 const API_KEY = '41896397-c8b989416d0fb53fd1030eb96';
 const BASE_URL = 'https://pixabay.com/api/';
+let page = 1;
 
 refs.form.addEventListener('submit', onSearchImage);
 
@@ -26,10 +29,18 @@ async function onSearchImage(event) {
   refs.list.innerHTML = '';
   const form = event.currentTarget;
   const inputValue = form.elements.image.value;
+  if (!inputValue) {
+    return;
+  }
   try {
     const data = await fetchOnImage(inputValue);
     refs.loader.classList.remove('loader');
     refs.list.innerHTML = createGaleryMarkup(data);
+    if (data.hits.length > 0) {
+      refs.loadbtn.classList.remove('is-hidden');
+    } else {
+      refs.loadbtn.classList.add('is-hidden');
+    }
     lightbox.refresh();
     if (data.hits.length === 0) {
       iziToast.error({
@@ -63,15 +74,17 @@ async function onSearchImage(event) {
 }
 
 async function fetchOnImage(inputValue) {
-  const urlParam = new URLSearchParams({
-    key: API_KEY,
-    q: inputValue,
-    image_type: 'photo',
-    orientation: 'horizontal',
-    safesearch: 'true',
+  const response = await axios.get(`${BASE_URL}`, {
+    params: {
+      key: API_KEY,
+      q: inputValue,
+      image_type: 'photo',
+      orientation: 'horizontal',
+      safesearch: 'true',
+      per_page: 40,
+      page: page,
+    },
   });
-
-  const response = await axios.get(`${BASE_URL}?${urlParam}`);
   return response.data;
 }
 
