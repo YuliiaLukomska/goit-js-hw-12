@@ -30,10 +30,11 @@ let inputValue = '';
 // вішаємо слухач на кнопку пошуку зображень
 refs.form.addEventListener('submit', onSearchImage);
 
-// функція, яка виконується при submit (отримуємо дані з серверу в try catch і рендеримо розмітку з цими даними,
+// функція, яка виконується при submit (отримуємо дані з серверу в try catch і рендеримо розмітку за цими даними,
 // додаємо кнопку Load More якщо на сторінці більше,ніж 1 картинка. На кнопку вішаємо слухач по кліку)
 async function onSearchImage(event) {
   event.preventDefault();
+  page = 1;
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
   const form = event.currentTarget;
@@ -43,8 +44,9 @@ async function onSearchImage(event) {
   }
   try {
     const data = await fetchOnImage(inputValue);
+    console.log(data);
+    createGaleryMarkup(data);
     refs.loader.classList.remove('loader');
-    refs.list.innerHTML = createGaleryMarkup(data);
     if (data.hits.length > 0) {
       refs.loadbtn.classList.remove('is-hidden');
       refs.loadbtn.addEventListener('click', onLoadMoreImages);
@@ -105,7 +107,8 @@ async function onLoadMoreImages() {
   try {
     const data = await fetchOnImage(inputValue, page);
     refs.loader.classList.remove('loader');
-    refs.list.innerHTML = createGaleryMarkup(data);
+    createGaleryMarkup(data);
+    lightbox.refresh();
   } catch (error) {
     console.log(error);
     iziToast.error({
@@ -122,8 +125,9 @@ async function onLoadMoreImages() {
   }
 }
 
+// Функція, яка рендерить розмітку
 function createGaleryMarkup(data) {
-  return data.hits
+  const markup = data.hits
     .map(
       img => `<li class="gallery-item">
           <a class="gallery-link" href="${img.largeImageURL}"
@@ -150,5 +154,5 @@ function createGaleryMarkup(data) {
         </li>`
     )
     .join('');
-  refs.list.insertAdjacentHTML();
+  refs.list.insertAdjacentHTML('beforeend', markup);
 }
