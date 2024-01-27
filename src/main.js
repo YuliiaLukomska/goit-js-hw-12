@@ -46,22 +46,19 @@ async function onSearchImage(event) {
       });
     }
   } catch (error) {
-    error =>
-      iziToast.error({
-        message: 'Error',
-        messageColor: '#FAFAFB',
-        messageLineHeight: '24px',
-        messageSize: '16px',
-        position: 'topRight',
-        iconUrl: icon,
-        backgroundColor: '#EF4040',
-        maxWidth: '350px',
-        timeout: false,
-      });
+    iziToast.error({
+      message: 'Error',
+      messageColor: '#FAFAFB',
+      messageLineHeight: '24px',
+      messageSize: '16px',
+      position: 'topRight',
+      iconUrl: icon,
+      backgroundColor: '#EF4040',
+      maxWidth: '350px',
+      timeout: false,
+    });
   } finally {
-    () => {
-      form.reset();
-    };
+    form.reset();
   }
 }
 
@@ -74,8 +71,8 @@ async function fetchOnImage(inputValue) {
     safesearch: 'true',
   });
 
-  const response = await fetch(`${BASE_URL}?${urlParam}`);
-  return response.json();
+  const response = await axios.get(`${BASE_URL}?${urlParam}`);
+  return response.data;
 }
 
 function createGaleryMarkup(data) {
