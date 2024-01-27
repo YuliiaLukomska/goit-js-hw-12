@@ -50,6 +50,7 @@ async function onSearchImage(event) {
     maxPage = Math.ceil(data.totalHits / 40);
     console.log(maxPage);
     createGaleryMarkup(data);
+
     refs.loader.classList.remove('loader');
     if (data.hits.length > 0 && data.hits.length !== data.totalHits) {
       refs.loadbtn.classList.remove('is-hidden');
@@ -87,6 +88,11 @@ async function onSearchImage(event) {
     });
   } finally {
     form.reset();
+    // const imageItem = document.querySelector('.gallery-item');
+    // console.log(imageItem);
+    // const sizes = imageItem.getBoundingClientRect();
+    // console.log(sizes.height);
+    // window.scrollBy(0, 400);
   }
 }
 // тут робимо get-запит на сервер
