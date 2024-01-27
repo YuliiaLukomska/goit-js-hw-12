@@ -28,7 +28,7 @@ async function onSearchImage(event) {
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
   const form = event.currentTarget;
-  const inputValue = form.elements.image.value;
+  const inputValue = form.elements.image.value.trim();
   if (!inputValue) {
     return;
   }
@@ -38,6 +38,7 @@ async function onSearchImage(event) {
     refs.list.innerHTML = createGaleryMarkup(data);
     if (data.hits.length > 0) {
       refs.loadbtn.classList.remove('is-hidden');
+      refs.loadbtn.addEventListener('submit', onMoreImages);
     } else {
       refs.loadbtn.classList.add('is-hidden');
     }
