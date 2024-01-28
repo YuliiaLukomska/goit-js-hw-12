@@ -88,11 +88,6 @@ async function onSearchImage(event) {
     });
   } finally {
     form.reset();
-    // const imageItem = document.querySelector('.gallery-item');
-    // console.log(imageItem);
-    // const sizes = imageItem.getBoundingClientRect();
-    // console.log(sizes.height);
-    // window.scrollBy(0, 400);
   }
 }
 // тут робимо get-запит на сервер
@@ -113,6 +108,7 @@ async function fetchOnImage(inputValue, page = 1) {
 // функція, яка викликається при кліку на кнопку Load More
 async function onLoadMoreImages() {
   page += 1;
+  scrollPage();
   refs.loader.classList.add('loader');
   try {
     const data = await fetchOnImage(inputValue, page);
@@ -176,4 +172,15 @@ function createGaleryMarkup(data) {
     )
     .join('');
   refs.list.insertAdjacentHTML('beforeend', markup);
+}
+
+function scrollPage() {
+  const imageItemRef = document.querySelector('.gallery-item');
+  const imageHeight = imageItemRef.getBoundingClientRect().height;
+  const doubleHeight = imageHeight * 2;
+
+  window.scrollBy({
+    top: doubleHeight,
+    behavior: 'smooth',
+  });
 }
