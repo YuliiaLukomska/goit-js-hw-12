@@ -128,6 +128,18 @@ async function onLoadMoreImages() {
     if (page === maxPage) {
       refs.loadbtn.classList.add('is-hidden');
       refs.loadbtn.removeEventListener('click', onLoadMoreImages);
+      iziToast.error({
+        message:
+          'We are sorry, but you have reached the end of search results.',
+        messageColor: '#FAFAFB',
+        messageLineHeight: '24px',
+        messageSize: '16px',
+        position: 'center',
+        iconUrl: icon,
+        backgroundColor: 'grey',
+        maxWidth: '350px',
+        timeout: false,
+      });
     }
   }
 }
