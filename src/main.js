@@ -72,17 +72,7 @@ async function onSearchImage(event) {
       });
     }
   } catch (error) {
-    iziToast.error({
-      message: 'Error',
-      messageColor: '#FAFAFB',
-      messageLineHeight: '24px',
-      messageSize: '16px',
-      position: 'topRight',
-      iconUrl: icon,
-      backgroundColor: '#EF4040',
-      maxWidth: '350px',
-      timeout: false,
-    });
+    createIziToastError();
   } finally {
     form.reset();
   }
@@ -113,17 +103,7 @@ async function onLoadMoreImages() {
     refs.loader.classList.remove('loader');
     lightbox.refresh();
   } catch (error) {
-    iziToast.error({
-      message: 'Error',
-      messageColor: '#FAFAFB',
-      messageLineHeight: '24px',
-      messageSize: '16px',
-      position: 'topRight',
-      iconUrl: icon,
-      backgroundColor: '#EF4040',
-      maxWidth: '350px',
-      timeout: false,
-    });
+    createIziToastError();
   } finally {
     if (page === maxPage) {
       refs.loadbtn.classList.add('is-hidden');
@@ -184,5 +164,20 @@ function scrollPage() {
   window.scrollBy({
     top: doubleHeight,
     behavior: 'smooth',
+  });
+}
+
+// Функція, яка створює сповіщення помилки за доп. iziToast
+function createIziToastError() {
+  iziToast.error({
+    message: 'Error',
+    messageColor: '#FAFAFB',
+    messageLineHeight: '24px',
+    messageSize: '16px',
+    position: 'topRight',
+    iconUrl: icon,
+    backgroundColor: '#EF4040',
+    maxWidth: '350px',
+    timeout: false,
   });
 }
