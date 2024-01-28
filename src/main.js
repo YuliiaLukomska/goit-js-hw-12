@@ -58,18 +58,9 @@ async function onSearchImage(event) {
     }
     lightbox.refresh();
     if (data.hits.length === 0) {
-      iziToast.error({
-        message:
-          'Sorry, there are no images matching your search query. Please try again!',
-        messageColor: '#FAFAFB',
-        messageLineHeight: '24px',
-        messageSize: '16px',
-        position: 'topRight',
-        iconUrl: icon,
-        backgroundColor: '#EF4040',
-        maxWidth: '350px',
-        timeout: false,
-      });
+      createIziToastError(
+        'Sorry, there are no images matching your search query. Please try again!'
+      );
     }
   } catch (error) {
     createIziToastError('Error');
@@ -156,6 +147,10 @@ function scrollPage() {
     top: doubleHeight,
     behavior: 'smooth',
   });
+}
+// Функція, яка ховає кнопку
+function hideBtnLoadMore() {
+  refs.loadbtn.classList.add('is-hidden');
 }
 
 // Функція, яка створює сповіщення помилки за доп. iziToast
