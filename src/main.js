@@ -35,7 +35,7 @@ refs.form.addEventListener('submit', onSearchImage);
 // додаємо кнопку Load More якщо на сторінці більше,ніж 1 картинка. На кнопку вішаємо слухач по кліку)
 async function onSearchImage(event) {
   event.preventDefault();
-  refs.loadbtn.classList.add('is-hidden');
+  hideBtnLoadMore();
   page = 1;
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
@@ -48,13 +48,13 @@ async function onSearchImage(event) {
     const data = await fetchOnImage(inputValue);
     maxPage = Math.ceil(data.totalHits / 40);
     createGaleryMarkup(data);
-
     refs.loader.classList.remove('loader');
+
     if (data.hits.length > 0 && data.hits.length !== data.totalHits) {
       refs.loadbtn.classList.remove('is-hidden');
       refs.loadbtn.addEventListener('click', onLoadMoreImages);
     } else {
-      refs.loadbtn.classList.add('is-hidden');
+      hideBtnLoadMore();
     }
     lightbox.refresh();
     if (data.hits.length === 0) {
@@ -97,7 +97,7 @@ async function onLoadMoreImages() {
     createIziToastError('Error');
   } finally {
     if (page === maxPage) {
-      refs.loadbtn.classList.add('is-hidden');
+      hideBtnLoadMore();
       refs.loadbtn.removeEventListener('click', onLoadMoreImages);
       createIziToastError(
         'We are sorry, but you have reached the end of search results.'
