@@ -72,7 +72,7 @@ async function onSearchImage(event) {
       });
     }
   } catch (error) {
-    createIziToastError();
+    createIziToastError('Error');
   } finally {
     form.reset();
   }
@@ -103,23 +103,14 @@ async function onLoadMoreImages() {
     refs.loader.classList.remove('loader');
     lightbox.refresh();
   } catch (error) {
-    createIziToastError();
+    createIziToastError('Error');
   } finally {
     if (page === maxPage) {
       refs.loadbtn.classList.add('is-hidden');
       refs.loadbtn.removeEventListener('click', onLoadMoreImages);
-      iziToast.error({
-        message:
-          'We are sorry, but you have reached the end of search results.',
-        messageColor: '#FAFAFB',
-        messageLineHeight: '24px',
-        messageSize: '16px',
-        position: 'center',
-        iconUrl: icon,
-        backgroundColor: 'grey',
-        maxWidth: '350px',
-        timeout: false,
-      });
+      createIziToastError(
+        'We are sorry, but you have reached the end of search results.'
+      );
     }
   }
 }
@@ -168,9 +159,9 @@ function scrollPage() {
 }
 
 // Функція, яка створює сповіщення помилки за доп. iziToast
-function createIziToastError() {
+function createIziToastError(notification) {
   iziToast.error({
-    message: 'Error',
+    message: notification,
     messageColor: '#FAFAFB',
     messageLineHeight: '24px',
     messageSize: '16px',
