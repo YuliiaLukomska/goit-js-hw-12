@@ -46,9 +46,7 @@ async function onSearchImage(event) {
   }
   try {
     const data = await fetchOnImage(inputValue);
-    console.log(data);
     maxPage = Math.ceil(data.totalHits / 40);
-    console.log(maxPage);
     createGaleryMarkup(data);
 
     refs.loader.classList.remove('loader');
@@ -74,7 +72,6 @@ async function onSearchImage(event) {
       });
     }
   } catch (error) {
-    console.log(error);
     iziToast.error({
       message: 'Error',
       messageColor: '#FAFAFB',
@@ -115,14 +112,7 @@ async function onLoadMoreImages() {
     createGaleryMarkup(data);
     refs.loader.classList.remove('loader');
     lightbox.refresh();
-
-    // const amountOfResults = data.totalHits;
-    // const maxPage = Math.ceil(amountOfResults / 40);
-    // if (page > maxPage) {
-    //   refs.loadbtn.classList.add('is-hidden');
-    // }
   } catch (error) {
-    console.log(error);
     iziToast.error({
       message: 'Error',
       messageColor: '#FAFAFB',
@@ -173,7 +163,7 @@ function createGaleryMarkup(data) {
     .join('');
   refs.list.insertAdjacentHTML('beforeend', markup);
 }
-
+// функція, яка додає плавний скрол на 2 висоти картинки
 function scrollPage() {
   const imageItemRef = document.querySelector('.gallery-item');
   const imageHeight = imageItemRef.getBoundingClientRect().height;
