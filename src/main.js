@@ -27,6 +27,7 @@ const BASE_URL = 'https://pixabay.com/api/';
 let page = 1;
 let inputValue = '';
 let maxPage = 0;
+let isHidden;
 
 // вішаємо слухач на кнопку пошуку зображень
 refs.form.addEventListener('submit', onSearchImage);
@@ -35,7 +36,7 @@ refs.form.addEventListener('submit', onSearchImage);
 // додаємо кнопку Load More якщо на сторінці більше,ніж 1 картинка. На кнопку вішаємо слухач по кліку)
 async function onSearchImage(event) {
   event.preventDefault();
-  hideBtnLoadMore();
+  hideAndShowLoadMoreBtn((isHidden = true));
   page = 1;
   refs.loader.classList.add('loader');
   refs.list.innerHTML = '';
@@ -51,10 +52,10 @@ async function onSearchImage(event) {
     refs.loader.classList.remove('loader');
 
     if (data.hits.length > 0 && data.hits.length !== data.totalHits) {
-      refs.loadbtn.classList.remove('is-hidden');
+      hideAndShowLoadMoreBtn((isHidden = false));
       refs.loadbtn.addEventListener('click', onLoadMoreImages);
     } else {
-      hideBtnLoadMore();
+      hideAndShowLoadMoreBtn((isHidden = true));
     }
     lightbox.refresh();
     if (data.hits.length === 0) {
@@ -97,7 +98,7 @@ async function onLoadMoreImages() {
     createIziToastError('Error');
   } finally {
     if (page === maxPage) {
-      hideBtnLoadMore();
+      hideAndShowLoadMoreBtn((isHidden = true));
       refs.loadbtn.removeEventListener('click', onLoadMoreImages);
       createIziToastError(
         'We are sorry, but you have reached the end of search results.'
@@ -148,9 +149,14 @@ function scrollPage() {
     behavior: 'smooth',
   });
 }
-// Функція, яка ховає кнопку
-function hideBtnLoadMore() {
-  refs.loadbtn.classList.add('is-hidden');
+
+// Функція, яка ховає або показує кнопку Load More
+function hideAndShowLoadMoreBtn(isHidden) {
+  if (isHidden) {
+    refs.loadbtn.classList.add('is-hidden');
+  } else {
+    refs.loadbtn.classList.remove('is-hidden');
+  }
 }
 
 // Функція, яка створює сповіщення помилки за доп. iziToast
